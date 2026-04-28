@@ -26,6 +26,7 @@ The test suite is designed to be **idempotent** — it can be run repeatedly wit
 ## Prerequisites
 
 Python 3.13.7
+
 Pip 25.2
 
 ### Dependencies
@@ -53,8 +54,8 @@ pip install -r requirements.txt
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd zedu_api_tests
+git clone "https://github.com/TestWithWenko/Zedu-API-Automation-Framework.git"
+cd Zedu-API-Automation-Framework
 ```
 
 ### 2. Create a virtual environment
