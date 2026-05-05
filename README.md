@@ -75,7 +75,6 @@ The pipeline will fail fast with a clear error message if any secret is missing,
 ## Prerequisites
 
 Python 3.13
-Pip 25.2
 
 ### Dependencies
 

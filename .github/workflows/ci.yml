@@ -80,7 +80,7 @@ jobs:
       - name: Create reports directory
         run: mkdir -p reports
 
-        
+
         #The test execution step
         #It executes all automated API tests, display each test result clearly in the pipleine log, keep failure messages short and readable, generates an XML report for Github to process, create an HTML report that can be opened on any browser, and skip creating unnecessary pytest cache files during the CI run
       - name: Run full test suite
@@ -94,7 +94,7 @@ jobs:
             -p no:cacheprovider
 
 
-        #This reads the junit XML and displays summary in Github UI for Passed, Failed and Skipped Tests
+        #This reads the junit XML and displays the summary in Github UI for Passed, Failed and Skipped Tests
       - name: Publish test summary
         uses: test-summary/action@v2
         if: always()
