@@ -1,4 +1,4 @@
-[![Zedu API Automation Test Suite](https://github.com/TestWithWenko/Zedu-API-Automation-Framework/actions/workflows/ci.yml/badge.svg)]
+![Zedu API Automation Test Suite](https://github.com/TestWithWenko/Zedu-API-Automation-Framework/actions/workflows/ci.yml/badge.svg)
 
 An automated API test suite for the [Zedu Chat API](https://api.zedu.chat/swagger/#/), built with Python and pytest. The suite covers authentication and user management with a focus on positive scenarios, negative scenarios, and edge cases and it runs automatically on every push and pull requests via Github Actions
 

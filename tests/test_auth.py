@@ -43,7 +43,7 @@ class TestValidRegistration:
         }
         response = unauthenticated_api.post("/auth/register", json = payload)
         
-        jsonData = assert_success_2xx(response, (200,201))
+        jsonData = assert_success(response, 201)
         
         assert_fields_present(jsonData, ["status", "status_code", "message", "data"])
         
@@ -133,7 +133,7 @@ class TestValidOnboardStatus:
 
 class TestValidLogout:
     
-    def test_valid_logout(self, authenticated_api):
+    def test_valid_logout(self):
         
         freshLogin = raw_login()
         assert freshLogin.status_code == 200
@@ -167,12 +167,12 @@ class TestValidLogout:
 class TestNegativeAuthCases:
     def test_login_with_wrong_password(self):
         resp = raw_login(password = fake.password())
-        assert_error(resp, 400)
+        assert_error(resp, 401)
     
         
     def test_login_with_unregistered_email(self):
         resp = raw_login(email = fake.email())
-        assert_error(resp, 400)
+        assert_error(resp, 401)
         
     def test_login_with_empty_password(self):
         resp = raw_login(password = "")
@@ -198,10 +198,7 @@ class TestNegativeAuthCases:
         }
         
         firstResp = unauthenticated_api.post("/auth/register", json=payload)
-        assert firstResp.status_code in [200, 201], (
-            f"First registration failed unexpectedly: {firstResp.text}"
-        )
-        jsonData = firstResp.json()
+        jsonData = assert_success(firstResp, 201)
         assert_fields_present(jsonData, ["message"])
         assert_field_types(jsonData, {"message": str})
         
@@ -280,7 +277,7 @@ class TestEdgeAuthCases:
     def test_login_extremely_long_password_does_not_crash_server(self):
         resp = raw_login(f"password={fake.password()* 1000}") 
         assert_no_server_error(resp)
-        assert resp.status_code in [400, 401, 422]
+        assert resp.status_code in [401, 422]
         assert_error(resp, 400)
         
     def test_login_with_form_encoded_body_does_not_crash_server(self):
@@ -323,10 +320,7 @@ class TestEdgeAuthCases:
         }
         
         resp = unauthenticated_api.post("/auth/register", json=payload)
-        assert resp.status_code in [200, 201], (
-            f"First registration failed unexpectedly: {resp.text}"
-        )
-        jsonData = resp.json()
+        jsonData = assert_success(resp, 201)
         assert_no_server_error(resp)
         assert_fields_present(jsonData, ["message"])
         assert_field_types(jsonData, {"message": str})

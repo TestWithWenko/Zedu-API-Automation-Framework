@@ -66,12 +66,12 @@ class TestUser:
         assert_schema(jsonData, USER_PROFILE_SCHEMA)
     
     
-    @pytest.mark.xfail(
-        reason=(
-            "API DEFECT: PUT /user/{userId} returns 200 with empty body. Correct behaviour should be either: 204 No Content with no body, OR 200 OK with the updated user object returned"
-        ),
-        strict=True  
-    )
+    # @pytest.mark.xfail(
+    #     reason=(
+    #         "API DEFECT: PUT /user/{userId} returns 200 with empty body. Correct behaviour should be either: 204 No Content with no body, OR 200 OK with the updated user object returned"
+    #     ),
+    #     strict=True  
+    # )
     
     def test_update_user_details(self, authenticated_api):
         user_id = get_user_id()
