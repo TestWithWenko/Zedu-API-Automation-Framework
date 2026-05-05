@@ -3,5 +3,11 @@
 venv/
 __pycache__/
 .pytest_cache/
+*.py[cod]
 *.pyc
 .vscode/
+.idea/
+reports/
+.coverage.xml
+.DS_Store
+Thumbs.db
