@@ -1,0 +1,112 @@
+#The title of my pipeline
+name: Zedu Chat API Automation Test Suite
+
+#My trigger 
+on:
+    #The pipeline runs when changes is pushed to main branches
+  push:
+    branches:
+      - main
+    #The pipeline runs when a pull request is raised agianst the main branch
+  pull_request:
+    branches:
+      - main
+
+
+#The full execution unit
+jobs:
+  run-tests:
+    #The name of the job
+    name: Zedu Chat Test Suite
+    #The job runs on a fresh linux machine provided by Github
+    runs-on: ubuntu-latest
+
+    #Injection of the secret values stored in Github secret into the runner environment
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+
+
+    steps:
+        #This clones the code into the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+        #Python installation on the virtual machine, enabling pip caching for speed
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+
+        #Upgrade pip and install all dependencies in requirement.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+        #Display env info for debugging purpose
+      - name: Display environment information
+        run: |
+          python --version
+          pip list
+
+
+        #Checks to confirm all secrets are available, if any is unavailable, pipeline fails immediately with a clear error
+      - name: Validate required secrets
+        run: |
+          if [ -z "$BASE_URL" ]; then
+            echo "BASE_URL is not set"
+            exit 1
+          fi
+
+          if [ -z "$TEST_EMAIL" ]; then
+            echo "TEST_EMAIL is not set"
+            exit 1
+          fi
+
+          if [ -z "$TEST_PASSWORD" ]; then
+            echo "TEST_PASSWORD is not set"
+            exit 1
+          fi
+
+          echo "All required secrets are available"
+
+        #Creates report folder to store junit XML report and html report (-p means there should be no error if folder already exists)
+      - name: Create reports directory
+        run: mkdir -p reports
+
+        
+        #The test execution step
+        #It executes all automated API tests, display each test result clearly in the pipleine log, keep failure messages short and readable, generates an XML report for Github to process, create an HTML report that can be opened on any browser, and skip creating unnecessary pytest cache files during the CI run
+      - name: Run full test suite
+        run: |
+          pytest \
+            -v \
+            --tb=short \
+            --junitxml=reports/junit-report.xml \
+            --html=reports/html-report.html \
+            --self-contained-html \
+            -p no:cacheprovider
+
+
+        #This reads the junit XML and displays summary in Github UI for Passed, Failed and Skipped Tests
+      - name: Publish test summary
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: reports/junit-report.xml
+
+
+        #Uploads the test reports in Github as downloadable artifacts and it is set to keep it for 30 days
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: reports/
+          retention-days: 30

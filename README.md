@@ -1,6 +1,6 @@
-# Zedu API Automation Test Suite
+[![Zedu API Automation Test Suite](https://github.com/TestWithWenko/Zedu-API-Automation-Framework/actions/workflows/ci.yml/badge.svg)]
 
-An automated API test suite for the [Zedu Chat API](https://api.zedu.chat/swagger/#/), built with Python and pytest. The suite covers authentication and user management with a focus on positive scenarios, negative scenarios, and edge cases.
+An automated API test suite for the [Zedu Chat API](https://api.zedu.chat/swagger/#/), built with Python and pytest. The suite covers authentication and user management with a focus on positive scenarios, negative scenarios, and edge cases and it runs automatically on every push and pull requests via Github Actions
 
 ---
 
@@ -22,11 +22,59 @@ Every test validates five layers of the response:
 The test suite is designed to be **idempotent** — it can be run repeatedly without manual cleanup, using `Faker` to generate fresh data on every run. Token handling is fully programmatic and centralized; no credentials or tokens are hardcoded anywhere.
 
 ---
+## CI Pipeline
+ 
+Every push to any branch and every pull request targeting `main` automatically triggers the full test suite on GitHub Action.
 
+### What the pipeline does
+ 
+```
+1. It checks out the repository
+2. Sets up Python 3.13
+3. Installs all dependencies from requirements.txt
+4. Validates that required secrets are configured
+5. Runs the full pytest suite with verbose output
+6. Publishes a test summary directly in the GitHub Actions UI
+7. Uploads JUnit XML and HTML reports as downloadable artifacts
+```
+
+### Pipeline behaviour on failure
+ 
+If any test fails, pytest exits with a non-zero exit code. GitHub Actions reads this and marks the entire pipeline run as **failed**. The pipeline never silently skips tests or swallows failures. The uploaded HTML report and the GitHub summary both show exactly which tests failed and why.
+
+
+### Viewing results
+ 
+After a pipeline run completes:
+ 
+- **Live logs** — visible in real time on the Actions tab during the run
+- **Test summary** — appears directly on the Actions run page after completion
+- **HTML report** — download from the Artifacts section of the run page
+- **JUnit XML** — also in Artifacts, usable by external reporting tools
+---
+
+### For CI — GitHub Secrets
+ 
+The pipeline reads these values from GitHub repository secrets.
+
+`BASE_URL` 
+`TEST_EMAIL` 
+`TEST_PASSWORD`
+
+To add them:
+ 
+1. Go to your repository on GitHub
+2. Click **Settings → Secrets and variables → Actions**
+3. Click **New repository secret**
+4. Add each of the three variables
+
+The pipeline will fail fast with a clear error message if any secret is missing, rather than failing later with a confusing error.
+ 
+---
+ 
 ## Prerequisites
 
-Python 3.13.7
-
+Python 3.13
 Pip 25.2
 
 ### Dependencies
@@ -49,7 +97,7 @@ pip install -r requirements.txt
 
 ---
 
-## Setup Instructions
+## Setup Instructions for running locally
 
 ### 1. Clone the repository
 
