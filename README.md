@@ -13,7 +13,7 @@ This project tests the Zedu Chat REST API across two endpoint groups:
 
 Every test validates five layers of the response:
 
-1. HTTP status code
+1. HTTP status codes
 2. Field presence
 3. Data types
 4. Field values
